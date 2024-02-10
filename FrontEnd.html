@@ -12,8 +12,12 @@
         Please enter a number.</p>
     <form action="submit_form.php" method="post">
 
-        <label for="ticker">Enter some text:</label>
-        <input type="text" id="ticker" name="Ticker">
+        <label for="numberInput">Enter some text:</label>
+        <input type="text" id="numberInput" name="numberInput" oninput="createTextBoxes
+(this.value)">
+        <div id="textBoxContainer"></div>
+
+
 
 
     </form>
