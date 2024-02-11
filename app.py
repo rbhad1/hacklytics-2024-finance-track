@@ -59,6 +59,14 @@ HTML_FORM = '''
 </html>
 '''
 
+def percent_change(old, new):
+    change = (new - old)/old * 100
+    return change
+
+def assignValue(metric):
+    metric_2022 = float(table[table.columns.values[1]].iloc[table.index == "Net Income"].to_string(index=False).strip())
+    metric_2023 =
+
 @app.route('/', methods=['GET', 'POST'])
 def home():
     if request.method == 'POST':
@@ -68,17 +76,22 @@ def home():
             try:
                 stock = yf.Ticker(ticker.strip())
                 table = stock.income_stmt
+
                 net_income_2022 = float(table[table.columns.values[1]].iloc[table.index == "Net Income"].to_string(index=False).strip())
                 net_income_2023 = float(table[table.columns.values[0]].iloc[table.index == "Net Income"].to_string(index=False).strip())
-                percent_change_net_income = (((net_income_2023 - net_income_2022) / net_income_2022) * 100)
+                percent_change_net_income = percent_change(net_income_2023, net_income_2022)
 
                 gross_profit_2022 = float(
                     table[table.columns.values[1]].iloc[table.index == "Gross Profit"].to_string(index=False).strip())
                 gross_profit_2023 = float(
                     table[table.columns.values[0]].iloc[table.index == "Gross Profit"].to_string(index=False).strip())
-                percent_change_gross_profit = (((gross_profit_2023 - gross_profit_2022) / gross_profit_2022) * 100)
+                percent_change_gross_profit = percent_change(gross_profit_2023, gross_profit_2022)
+
+
                 data[ticker] = {"net income": percent_change_net_income,
-                                "gross profit": percent_change_gross_profit}
+                                "gross profit": percent_change_gross_profit,
+                                "operation expense": percent_change_operation_exp
+                                "diluted EPS": percent_change_eps}
 
 
             except Exception as e:
