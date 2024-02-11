@@ -59,6 +59,7 @@ HTML_FORM = '''
 </html>
 '''
 
+
 @app.route('/', methods=['GET', 'POST'])
 def home():
     if request.method == 'POST':
@@ -68,8 +69,10 @@ def home():
             try:
                 stock = yf.Ticker(ticker.strip())
                 table = stock.income_stmt
-                net_income_2022 = float(table[table.columns.values[1]].iloc[table.index == "Net Income"].to_string(index=False).strip())
-                net_income_2023 = float(table[table.columns.values[0]].iloc[table.index == "Net Income"].to_string(index=False).strip())
+                net_income_2022 = float(
+                    table[table.columns.values[1]].iloc[table.index == "Net Income"].to_string(index=False).strip())
+                net_income_2023 = float(
+                    table[table.columns.values[0]].iloc[table.index == "Net Income"].to_string(index=False).strip())
                 percent_change_net_income = (((net_income_2023 - net_income_2022) / net_income_2022) * 100)
 
                 gross_profit_2022 = float(
@@ -79,10 +82,13 @@ def home():
                 percent_change_gross_profit = (((gross_profit_2023 - gross_profit_2022) / gross_profit_2022) * 100)
 
                 operating_expense_2022 = float(
-                    table[table.columns.values[1]].iloc[table.index == "Operating Expense"].to_string(index=False).strip())
+                    table[table.columns.values[1]].iloc[table.index == "Operating Expense"].to_string(
+                        index=False).strip())
                 operating_expense_2023 = float(
-                    table[table.columns.values[0]].iloc[table.index == "Operating Expense"].to_string(index=False).strip())
-                percent_change_operating_expense = (((operating_expense_2023 - operating_expense_2022) / operating_expense_2022) * 100)
+                    table[table.columns.values[0]].iloc[table.index == "Operating Expense"].to_string(
+                        index=False).strip())
+                percent_change_operating_expense = (
+                            ((operating_expense_2023 - operating_expense_2022) / operating_expense_2022) * 100)
 
                 diluted_EPS_2022 = float(
                     table[table.columns.values[1]].iloc[table.index == "Diluted EPS"].to_string(
@@ -100,8 +106,6 @@ def home():
                         index=False).strip())
                 percent_change_total_revenue = (((total_revenue_2023 - total_revenue_2022) / total_revenue_2022) * 100)
 
-
-
                 data[ticker] = {"net income": percent_change_net_income,
                                 "gross profit": percent_change_gross_profit,
                                 "operating expense": percent_change_operating_expense,
@@ -113,7 +117,23 @@ def home():
                 data[ticker] = f"Error retrieving data: {e}"
         return f'<pre>{data}</pre>'
     else:
-        return render_template_string(HTML_FORM)
+        return render_template_string(HTML_FORM + "\n" + "SCORE: " + calculate_score())
+
+
+def calculate_score():
+    data = home()
+    score = 0
+    for ticker in data:
+        for metrics in ticker:
+            for change in metrics:
+                if (change == "operating expense"):
+                    if (change.values() <= 0):
+                        score += 1
+                else:
+                    if (change.values >= 0):
+                        score += 1
+    return str(score)
+
 
 if __name__ == '__main__':
     app.run(debug=True)
