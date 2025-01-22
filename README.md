@@ -1,3 +1,5 @@
+# Financial Web Application
+
 I created a financial web application using Python, Flask, HTML, CSS, and JavaScript in PyCharm and Jupyter Notebook for a data science Hackathon. The purpose of this project was the increase proficiency with working APIs and front-end development. 
 This project also provided the opportunity to learn Flask and work with PyCharm for the first time. 
 
